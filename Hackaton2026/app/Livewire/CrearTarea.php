@@ -29,11 +29,18 @@ class CrearTarea extends Component
     {
         $this->validate();
 
+        //formateo de minutos a HH:MM:SS
+        $totalMinutos = $this->tiempoAsignado;
+        $horas = floor($totalMinutos / 60);
+        $minutosRestantes = $totalMinutos % 60;
+
+        $formatoTime = sprintf('%02d:%02d:00', $horas, $minutosRestantes);
+
         Tarea::create([
             'nombreTarea' => $this->nombreTarea,
             'descripcion' => $this->descripcion,
             'fechaHora' => $this->fechaHora,
-            'tiempoAsignado' => $this->tiempoAsignado,
+            'tiempoAsignado' => $formatoTime,
             'importancia' => $this->importancia,
         ]);
         $this->reset([
@@ -45,6 +52,8 @@ class CrearTarea extends Component
         ]);
 
         session()->flash('mensaje', 'Tarea agregada correctamente');
+
+        return redirect()->route('dashboard');
     }
 
     public function rules()

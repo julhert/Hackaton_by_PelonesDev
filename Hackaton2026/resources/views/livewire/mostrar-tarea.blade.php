@@ -4,6 +4,22 @@
     segundos: 0,
     corriendo: false,
     intervalo: null,
+    mostrarAviso: false,
+    mensaje: '',
+
+    init() {
+        window.addEventListener('mostrar-aviso', (e) => {
+            // Asignamos el mensaje que viene de Livewire
+            this.mensaje = e.detail.mensaje;
+            this.mostrarAviso = true;
+
+            // Consola para que tú veas si el evento llegó (presiona F12)
+            console.log('Evento recibido:', e.detail.mensaje);
+
+            // Se quita en 8 segundos
+            setTimeout(() => { this.mostrarAviso = false; }, 8000);
+        });
+    },
 
     abrirDetalles(tarea) {
         if (this.corriendo && this.tareaActiva && this.tareaActiva.id === tarea.id) {
@@ -57,9 +73,25 @@
     }
 }" class="p-6 min-h-screen bg-gray-50">
 
+<div wire:ignore>
+    <div x-show="mostrarAviso"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 transform scale-90"
+         x-transition:enter-end="opacity-100 transform scale-100"
+         style="display: none; position: fixed; top: 20px; right: 20px; z-index: 9999;"
+         class="bg-yellow-400 border-l-4 border-yellow-600 p-4 shadow-2xl rounded-lg animate-bounce">
+        <div class="flex items-center">
+            <span class="mr-2 text-xl">🔔</span>
+            <p class="text-sm font-bold text-yellow-900" x-text="mensaje"></p>
+            <button @click="mostrarAviso = false" class="ml-4 text-yellow-700 font-extrabold hover:text-yellow-900">&times;</button>
+        </div>
+    </div>
+</div>
+
     <div class="mb-8 flex justify-between items-center max-w-6xl mx-auto">
         <h1 class="text-3xl font-extrabold text-gray-900">Lista de Tareas</h1>
-        <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-5 rounded-lg shadow transition">
+        <button @click="window.location.href= '{{ route('crearTarea') }}'"
+            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-5 rounded-lg shadow transition">
             + Nueva Tarea
         </button>
     </div>
