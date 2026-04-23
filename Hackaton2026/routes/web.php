@@ -2,6 +2,7 @@
 
 use App\Livewire\CrearTarea;
 use Illuminate\Support\Facades\Route;
+use App\Livewire\Notas;
 
 Route::get('/', function () {
     return redirect()->route('dashboard');
@@ -13,6 +14,7 @@ Route::get('/dashboard', function () {
 })->name('dashboard');
 
 Route::get('/crearTarea', CrearTarea::class)->name('crearTarea');
+Route::get('/notas', Notas::class)->name('notas');
 
 // Route::get('/', function () {
 //     return view('welcome');
