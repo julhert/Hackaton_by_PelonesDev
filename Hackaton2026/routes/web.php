@@ -1,6 +1,7 @@
 <?php
 
 use App\Livewire\CrearTarea;
+use App\Livewire\GestorNotas;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -13,6 +14,7 @@ Route::get('/dashboard', function () {
 })->name('dashboard');
 
 Route::get('/crearTarea', CrearTarea::class)->name('crearTarea');
+Route::get('/notas', GestorNotas::class)->name('crearNota');
 
 // Route::get('/', function () {
 //     return view('welcome');
