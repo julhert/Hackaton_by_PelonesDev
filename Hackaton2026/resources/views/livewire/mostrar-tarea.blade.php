@@ -6,7 +6,6 @@
     intervalo: null,
 
     abrirDetalles(tarea) {
-        // Validación: Si ya hay una tarea corriendo y es la misma, no reseteamos el reloj
         if (this.corriendo && this.tareaActiva && this.tareaActiva.id === tarea.id) {
             this.modalAbierto = true;
             return; 
@@ -14,7 +13,6 @@
 
         this.tareaActiva = tarea;
         this.modalAbierto = true;
-        // Si es una tarea nueva, detenemos el reloj anterior y lo reiniciamos
         this.corriendo = false;
         if(this.intervalo) clearInterval(this.intervalo);
     },
@@ -22,7 +20,6 @@
     iniciarCronometro() {
         if (this.corriendo || !this.tareaActiva.tiempoAsignado) return;
 
-        // Validación: Convertir el formato HH:MM:SS de la BD a segundos totales
         let tiempoString = this.tareaActiva.tiempoAsignado.toString();
         let partes = tiempoString.split(':');
         
@@ -45,7 +42,6 @@
                 clearInterval(this.intervalo);
                 this.corriendo = false;
                 alert('¡Tiempo terminado!');
-                // Descomenta la siguiente línea cuando se haga el backend de finalizar
                 // $wire.finalizarTarea(this.tareaActiva.id); 
             }
         }, 1000);
@@ -140,15 +136,20 @@
          class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm px-4"
          x-transition>
 
-        <div @click.away="modalAbierto = false" class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
+        <div @click.away="if(!corriendo) { modalAbierto = false }" class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
 
             <div class="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
                 <h3 class="text-xl font-extrabold text-gray-800" x-text="tareaActiva?.nombreTarea"></h3>
-                <button @click="modalAbierto = false" class="text-gray-400 hover:text-red-500 font-bold text-xl">&times;</button>
+                
+                <button x-show="!corriendo" @click="modalAbierto = false" class="text-gray-400 hover:text-red-500 font-bold text-xl">&times;</button>
             </div>
 
             <div class="p-6 space-y-4">
                 
+                <div x-show="corriendo" class="text-center pb-2">
+                    <span class="text-xs font-bold text-red-500 uppercase tracking-widest animate-pulse">🔴 Modo Concentración Activo</span>
+                </div>
+
                 <div x-show="corriendo" class="text-center py-4 bg-indigo-50 rounded-xl mb-4">
                     <span class="text-4xl font-mono font-bold text-indigo-600" x-text="formatTime()"></span>
                 </div>
@@ -171,7 +172,8 @@
             </div>
 
             <div class="bg-gray-50 px-6 py-4 flex justify-end gap-3 border-t border-gray-100">
-                <button @click="modalAbierto = false" class="px-4 py-2 text-gray-600 hover:bg-gray-200 rounded-lg font-semibold transition">
+                
+                <button x-show="!corriendo" @click="modalAbierto = false" class="px-4 py-2 text-gray-600 hover:bg-gray-200 rounded-lg font-semibold transition">
                     Cerrar
                 </button>
 
